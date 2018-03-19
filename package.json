@@ -1,0 +1,48 @@
+{
+  "name": "vitaclear-rss-reader",
+  "version": "0.0.1",
+  "description": "RSS reader",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vitaclear/project-lvl3-s222.git"
+  },
+  "author": "Vita Chistyakova",
+  "license": "ISC",
+  "bin": {
+    "reader": "dist/bin/reader.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "babel-node": "babel-node",
+    "build": "NODE_ENV=production babel src --out-dir dist --source-maps inline",
+    "prepublishOnly": "npm run build",
+    "eslint": "eslint",
+    "test": "jest"
+  },
+  "bugs": {
+    "url": "https://github.com/vitaclear/project-lvl3-s222/issues"
+  },
+  "homepage": "https://github.com/vitaclear/project-lvl3-s222#readme",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.2.2",
+    "babel-jest": "^23.0.0-alpha.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "eslint": "^4.19.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-jest": "^21.15.0",
+    "jest": "^22.4.2",
+    "travis": "^0.1.1"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  }
+}
