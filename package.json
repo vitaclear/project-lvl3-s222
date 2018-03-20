@@ -31,8 +31,10 @@
   "homepage": "https://github.com/vitaclear/project-lvl3-s222#readme",
   "dependencies": {
     "bootstrap": "^4.0.0",
+    "css-loader": "^0.28.11",
     "jquery": "^3.3.1",
-    "popper.js": "^1.14.1"
+    "popper.js": "^1.14.1",
+    "style-loader": "^0.20.3"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
