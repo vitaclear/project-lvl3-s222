@@ -1,7 +1,7 @@
 #! /usr/bin/env node
 // import exec from 'commander';
 // import genDiff from '..';
-import { version, description } from '../../package.json';
+// import { version, description } from '../../package.json';
 
 // exec
 //  .version(version)

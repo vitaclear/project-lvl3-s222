@@ -30,18 +30,21 @@
   },
   "homepage": "https://github.com/vitaclear/project-lvl3-s222#readme",
   "dependencies": {
+    "axios": "^0.18.0",
     "bootstrap": "^4.0.0",
     "css-loader": "^0.28.11",
     "jquery": "^3.3.1",
     "minimatch": "^3.0.4",
     "popper.js": "^1.14.1",
-    "style-loader": "^0.20.3"
+    "style-loader": "^0.20.3",
+    "validator": "^9.4.1"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.2.2",
     "babel-jest": "^23.0.0-alpha.0",
+    "babel-loader": "^7.1.4",
     "babel-preset-env": "^1.6.1",
     "babel-preset-stage-0": "^6.24.1",
     "eslint": "^4.19.0",

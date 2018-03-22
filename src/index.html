@@ -3,13 +3,27 @@
   <head>
     <meta charset="utf-8">
     <title>Форма добавления потока RSS</title>
+<!--    <script src="./handler.js"></script> -->
   </head>
   <body>
-    <div class="jumbotron">
-      <h1 class="display-4">Добавьте поток RSS</h1>
-      <p class="lead">
-        <a class="btn btn-primary btn-lg" href="#" role="button">Добавить</a>
-      </p>
+    <form name="addRSS" method="post" action="">
+      <div class="jumbotron">
+        <h1 class="display-6">Добавьте поток RSS</h1>
+        <p>
+          <input type="url" id="url" size="80" onkeypress="validateInput(this)" required>
+        </p>
+        <p class="lead">
+          <input class="btn btn-primary btn-lg" type="submit" value="Добавить" onclick="addStream()">
+        </p>
+      </div>
+    </form>
+    <div>
+      <span size="40">
+        <h2 class="display-8">Список потоков</h2>
+      </span>
+      <span size="60">
+        <h2 class="display-8">Список статей</h2>
+      </span>
     </div>
   </body>
 </html>
