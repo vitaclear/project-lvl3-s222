@@ -6,24 +6,24 @@
 <!--    <script src="./temp.js"></script> -->
   </head>
   <body>
-    <form name="addRSS">
+    <form name="addRSS" class="needs-validation">
       <div class="jumbotron">
         <h1 class="display-6">Добавьте поток RSS</h1>
-        <p>
-          <input type="url" id="url" size="80" required> <!--  onkeypress="validateInput(this)" -->
-        </p>
+        <div>
+          <input type="url" id="url" size="80" required>
+        </div>
         <p class="lead">
-          <input type="submit" class="btn btn-primary btn-lg" id="button" value="Добавить" onclick="addStream()">
+          <input type="submit" class="btn btn-primary btn-lg" id="button" value="Добавить">
         </p>
       </div>
     </form>
     <div class="container">
       <div class="row">
-        <div class="col-7">
-          <h2>Список потоков</h2>
+        <div class="col-5">
+          <h2 id="rssList">Список потоков</h2>
         </div>
         <div class="col">
-          <h2>Список статей</h2>
+          <h2 id="articleList">Список статей</h2>
         </div>
       </div>
     </div>
