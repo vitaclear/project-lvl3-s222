@@ -2,9 +2,9 @@ const HTMLWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 
 module.exports = {
-  entry: './src/index.js',
+  entry: './src/temp.js',
   output: {
-    filename: 'index_bundle.js',
+    filename: 'temp_bundle.js',
     path: path.resolve(__dirname, 'dist'),
   },
   module: {
@@ -28,7 +28,7 @@ module.exports = {
       title: 'Add RSS',
       filename: 'index.html',
       template: './src/index.html',
-      inject: 'head',
+      inject: 'body',
     }),
   ],
 };

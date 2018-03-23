@@ -26,10 +26,13 @@ const parseRSS = (str) => {
 };
 
 const addRssToList = (dom, rssList) => {
-  const streamTitle = dom.title;
-  const desc = dom.description;
-  rssList[streamTitle] = desc;
-  // добавить вывод статей в поле articles - список ссылок с названиями статей
+  const keys = Object.keys(rssList);
+  const newList = keys.reduce((acc, el) => {
+    acc[el] = rssList[el];
+    return acc;
+  }, {});
+  newList[dom.title] = { description: dom.description, link: dom.link };
+  return newList;
 };
 
 const parseError = (str) => {

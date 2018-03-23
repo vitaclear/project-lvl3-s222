@@ -3,27 +3,29 @@
   <head>
     <meta charset="utf-8">
     <title>Форма добавления потока RSS</title>
-<!--    <script src="./handler.js"></script> -->
+<!--    <script src="./temp.js"></script> -->
   </head>
   <body>
-    <form name="addRSS" method="post" action="">
+    <form name="addRSS">
       <div class="jumbotron">
         <h1 class="display-6">Добавьте поток RSS</h1>
         <p>
-          <input type="url" id="url" size="80" onkeypress="validateInput(this)" required>
+          <input type="url" id="url" size="80" required> <!--  onkeypress="validateInput(this)" -->
         </p>
         <p class="lead">
-          <input class="btn btn-primary btn-lg" type="submit" value="Добавить" onclick="addStream()">
+          <input type="submit" class="btn btn-primary btn-lg" id="button" value="Добавить" onclick="addStream()">
         </p>
       </div>
     </form>
-    <div>
-      <span size="40">
-        <h2 class="display-8">Список потоков</h2>
-      </span>
-      <span size="60">
-        <h2 class="display-8">Список статей</h2>
-      </span>
+    <div class="container">
+      <div class="row">
+        <div class="col-7">
+          <h2>Список потоков</h2>
+        </div>
+        <div class="col">
+          <h2>Список статей</h2>
+        </div>
+      </div>
     </div>
   </body>
 </html>
