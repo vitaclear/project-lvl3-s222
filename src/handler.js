@@ -40,6 +40,7 @@ const addItemToList = (newItem) => {
   const itemTitle = newItem.querySelector('title').firstChild.data;
   const itemDesc = newItem.querySelector('description').firstChild.wholeText;
   const itemLink = newItem.querySelector('link').firstChild.data;
+  state.listOfArticleTitles.push(itemTitle);
   if (!hasItem(itemTitle, state.listOfArticles)) {
     state.listOfArticles.push({ title: itemTitle, description: itemDesc, link: itemLink });
   }
@@ -73,31 +74,45 @@ const addRssToLists = (dom) => {
 };
 
 const addNewItems = (dom) => {
+  let hasNewItems = false;
   const [...findItems] = dom.getElementsByTagName('item');
-  console.log('TEST TEST TEST');
+  const findNewItems = (arr, i) => {
+    if (i < 0) {
+      return;
+    }
+    const title = arr[i].querySelector('title').textContent;
+    if (!state.listOfArticleTitles.includes(title)) {
+      hasNewItems = true;
+      addItemToList(arr[i]);
+    }
+    findNewItems(arr, i - 1);
+  };
+  findNewItems(findItems, 5);
+  return hasNewItems;
 };
 
-const findNewArticles = () => {
-  state.listOfRss.forEach((el) => {
-    const corsUrl = `${cors}${el.link}`;
+const addNewArticles = () => {
+  state.listOfRssLinks.forEach((el) => {
+    const corsUrl = `${cors}${el}`;
     axios.get(corsUrl)
       .then(response => parseRSS(response))
       .then(response => addNewItems(response))
+      .then(response => (response ? renderLists() : {}))
       .catch(error => parseError(error));
   });
-//  renderLists();
 };
 
 const addStream = (event) => {
   event.preventDefault();
   const url = document.getElementById('url').value;
+  state.listOfRssLinks.push(url);
   const corsUrl = `${cors}${url}`;
   document.getElementById('url').value = '';
   axios.get(corsUrl)
     .then(response => parseRSS(response))
     .then(response => addRssToLists(response))
     .then(() => renderLists())
-    .then(() => setInterval(findNewArticles, 5000))
+    .then(() => setInterval(addNewArticles, 5000))
     .catch(error => parseError(error));
   return false;
 };
