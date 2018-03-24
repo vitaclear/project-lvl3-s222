@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8">
     <title>Форма добавления потока RSS</title>
-<!--    <script src="./temp.js"></script> -->
+    <base target="_blank">
   </head>
   <body>
-    <form name="addRSS" class="needs-validation">
+    <form id="addRSS" class="needs-validation">
       <div class="jumbotron">
         <h1 class="display-6">Добавьте поток RSS</h1>
         <div>
@@ -19,11 +19,9 @@
     </form>
     <div class="container">
       <div class="row">
-        <div class="col-5">
-          <h2 id="rssList">Список потоков</h2>
+        <div class="col-5" id="rssList">
         </div>
-        <div class="col">
-          <h2 id="articleList">Список статей</h2>
+        <div class="col" id="articleList">
         </div>
       </div>
     </div>

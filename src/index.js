@@ -1,10 +1,11 @@
-/* eslint-env browser */
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import addStream from './handler';
+import './handler';
 
-const rssList = {};
+const state = {
+  isValidURL: true,
+  listOfRss: [],
+  listOfArticles: [],
+};
 
-export default function () {
-  addStream(rssList);
-}
+export default state;

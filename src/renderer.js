@@ -1,51 +1,45 @@
-const makeDom = (el, array) => {
-  if (!array || array.length === 0) {
-    return el;
-  }
-  const header = el;
+import state from './';
 
-  const hasElt = (object) => {
-    console.log('entry point');
-    let result = false;
-    const [...elements] = el.parentElement.children;
-    elements.forEach((element) => {
-      const titleIs = element.querySelector('title').firstChild.data;
-      if (object.title === titleIs) {
-        result = true;
-      }
-    });
-    console.log(`4444 ${result}`);
-    return result;
-  };
+const makeDom = (head, array, name) => {
+  if (!array || array.length === 0) {
+    return head;
+  }
+  const txt = document.createTextNode(name);
+  const header = document.createElement('h2');
+  header.appendChild(txt);
+
+  const [...children] = head.children;
+  children.forEach(el => head.removeChild(el));
+  const br = document.createElement('br');
+  head.appendChild(br);
 
   const addElt = (obj) => {
-//    if (hasElt(obj)) {
-//      return;
-//    }
-    const pEl = document.createElement('p');
+    const divEl = document.createElement('div');
     const keys = Object.keys(obj);
     keys.forEach((elem) => {
-      const tag = document.createElement('elem');
-      const text = document.createTextNode(`${obj[elem]}`);
+      const tag = elem === 'title' ? document.createElement('h5') : document.createElement('p');
+      tag.className = `${elem}`;
+      const elemText = document.createTextNode(`${obj[elem]}`);
+      const aEl = document.createElement('a');
+      aEl.href = `${obj[elem]}`;
+      aEl.appendChild(elemText);
+      const text = elem === 'link' ? aEl : elemText;
       tag.appendChild(text);
-      pEl.appendChild(tag);
+      divEl.appendChild(tag);
     });
-    el.parentElement.prepend(pEl);
-    el.parentElement.prepend(header);
+    head.prepend(divEl);
   };
   array.forEach(elt => addElt(elt));
-  return el;
+  head.prepend(header);
+  return head;
 };
 
-const render = (arr) => {
-  if (arr.length === 0) {
-    return new Error('Отсутствуют элементы');
-  }
+const render = () => {
   const rssList = document.getElementById('rssList');
   const articleList = document.getElementById('articleList');
 
-  const rssDom = makeDom(rssList, arr[0]);
-  const articleDom = makeDom(articleList, arr[1]);
+  const rssDom = makeDom(rssList, state.listOfRss, 'Список потоков');
+  const articleDom = makeDom(articleList, state.listOfArticles, 'Список статей');
 
   return [rssDom, articleDom];
 };

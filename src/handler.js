@@ -1,32 +1,19 @@
-import 'bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import isURL from 'validator/lib/isURL';
 import axios from 'axios';
 import renderLists from './renderer';
-
-const listOfRss = [];
-const listOfArticles = [];
+import state from './';
 
 const validateInput = () => {
   const url = document.forms.addRSS.elements.url.value;
-  const isValidInput = isURL(url);
-  if (!isValidInput) {
-    document.getElementById('url').setCustomValidity('Введите адрес');
-    document.getElementById('url').class = 'form-control :invalid';
-    document.getElementById('url').borderColor = 'red';
+  state.isValidURL = isURL(url);
+  if (!state.isValidURL) {
+  //    document.getElementById('url').setCustomValidity('Введите адрес');
+    document.getElementById('url').className = 'form-control is-invalid';
   } else {
-    document.getElementById('url').setCustomValidity('');
-    document.getElementById('url').class = 'form-control :valid';
-    document.getElementById('url').borderColor = '';
+  //  document.getElementById('url').setCustomValidity('');
+    document.getElementById('url').className = 'form-control is-valid';
   }
-  return isValidInput;
-};
-
-const getURL = () => {
-  console.log('GET URL');
-  const url = document.getElementById('url').value;
-  console.log(`url = ${url}`);
-  return url;
+  return state.isValidURL;
 };
 
 const parseError = (str) => {
@@ -41,44 +28,35 @@ const parseRSS = (str) => {
   return parsed;
 };
 
+const hasItem = (titl, lst) => lst.reduce((acc, el) => {
+  if (el.title === titl) {
+    return true;
+  }
+  return acc;
+}, false);
+
 const addRssToLists = (dom) => {
-//  const channelKeys = dom.firstChild.firstChild.children;
   const findTitle = dom.querySelector('title');
   const title = findTitle.firstChild.data;
   const findDesc = dom.querySelector('description');
-  //  let desc = '';
-  // if (findDesc.length === 0) {
-  //  console.log('Description отсутствует');
-  // } else {
   const desc = findDesc.firstChild.data;
-  // }
   const findLink = dom.querySelector('link');
-  // let lnk = '';
-  // if (findLink[0].children.length === 0) {
-  //  lnk = findLink[0].href;
-  // } else {
   const lnk = findLink.firstChild.data;
-  // }
-  console.log('CONTROL');
-  console.log(`$$$ find = ${title} ... ${desc} ... ${lnk}`);
-  //  const keys = Object.keys(listOfRss);
-  //  const newList = keys.reduce((acc, el) => {
-  //    acc[el] = listOfRss[el];
-  //    return acc;
-  //  }, {});
-  listOfRss.push({ title, description: desc, link: lnk });
+  if (!hasItem(title, state.listOfRss)) {
+    state.listOfRss.push({ title, description: desc, link: lnk });
+  }
 
   const [...findItem] = dom.getElementsByTagName('item');
   const addItem = (arr, i = 19) => {
     if (i < 0) {
-      console.log('00000000000');
       return;
     }
     const itemTitle = arr[i].querySelector('title').firstChild.data;
     const itemDesc = arr[i].querySelector('description').firstChild.data;
     const itemLink = arr[i].querySelector('link').firstChild.data;
-    console.log(`!!!! item ${itemTitle} .. ${itemDesc} .. ${itemLink}`);
-    listOfArticles.push({ title: itemTitle, description: itemDesc, link: itemLink });
+    if (!hasItem(itemTitle, state.listOfArticles)) {
+      state.listOfArticles.push({ title: itemTitle, description: itemDesc, link: itemLink });
+    }
     addItem(arr, i - 1);
   };
 
@@ -87,30 +65,24 @@ const addRssToLists = (dom) => {
   } else {
     addItem(findItem);
   }
-
-  console.log(listOfRss);
-  console.log(listOfArticles);
-  return [listOfRss, listOfArticles];
+  return state;
 };
 
 const addStream = () => {
-  const url = getURL();
-  if (url === '') {
-    return;
-  }
+  const url = document.getElementById('url').value;
   const corsUrl = `https://crossorigin.me/${url}`;
-  console.log(`----- corsURL -- ${corsUrl} --`);
   document.getElementById('url').value = '';
   axios.get(corsUrl)
     .then(response => parseRSS(response))
     .then(response => addRssToLists(response))
-    .then(response => renderLists(response))
+    .then(() => renderLists())
     .catch(error => parseError(error));
 };
 
 const urlField = document.getElementById('url');
 urlField.addEventListener('input', validateInput);
-const butn = document.getElementById('button');
-butn.addEventListener('click', addStream);
-console.log(Object.keys(listOfRss));
-// export default addStream(listOfRss);
+const form = document.getElementById('addRSS');
+const btn = document.getElementById('button');
+console.log(`form ${form}`);
+// form.addEventListener('submit', addStream);
+btn.addEventListener('click', addStream);

@@ -9,9 +9,6 @@
   },
   "author": "Vita Chistyakova",
   "license": "ISC",
-  "bin": {
-    "reader": "dist/bin/reader.js"
-  },
   "files": [
     "dist"
   ],
