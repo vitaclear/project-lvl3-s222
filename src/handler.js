@@ -52,7 +52,7 @@ const addRssToLists = (dom) => {
       return;
     }
     const itemTitle = arr[i].querySelector('title').firstChild.data;
-    const itemDesc = arr[i].querySelector('description').firstChild.data;
+    const itemDesc = arr[i].querySelector('description').firstChild.wholeText;
     const itemLink = arr[i].querySelector('link').firstChild.data;
     if (!hasItem(itemTitle, state.listOfArticles)) {
       state.listOfArticles.push({ title: itemTitle, description: itemDesc, link: itemLink });
@@ -81,8 +81,7 @@ const addStream = () => {
 
 const urlField = document.getElementById('url');
 urlField.addEventListener('input', validateInput);
-const form = document.getElementById('addRSS');
-const btn = document.getElementById('button');
-console.log(`form ${form}`);
-// form.addEventListener('submit', addStream);
-btn.addEventListener('click', addStream);
+const formAdd = document.getElementById('addRSS');
+// const btn = document.getElementById('button');
+formAdd.addEventListener('submit', addStream);
+// btn.addEventListener('click', addStream);
