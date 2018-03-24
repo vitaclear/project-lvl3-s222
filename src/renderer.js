@@ -1,4 +1,4 @@
-import 'jquery';
+// import 'jquery';
 import state from './';
 
 const makeDom = (head, array, name) => {
@@ -44,6 +44,8 @@ const makeDom = (head, array, name) => {
       document.getElementById('modalBody').textContent = obj.description;
     });
     divEl.append(butn);
+    const brTag = document.createElement('br');
+    divEl.append(brTag);
     head.prepend(divEl);
   };
   array.forEach(elt => addElt(elt));

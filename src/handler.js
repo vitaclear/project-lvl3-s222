@@ -3,6 +3,8 @@ import axios from 'axios';
 import renderLists from './renderer';
 import state from './';
 
+const cors = 'https://crossorigin.me/';
+
 const validateInput = () => {
   const url = document.forms.addRSS.elements.url.value;
   state.isValidURL = isURL(url);
@@ -22,7 +24,6 @@ const parseError = (str) => {
 };
 
 const parseRSS = (str) => {
-  console.log(str.data);
   const parser = new DOMParser();
   const parsed = parser.parseFromString(str.data, 'application/xml');
   return parsed;
@@ -35,6 +36,16 @@ const hasItem = (titl, lst) => lst.reduce((acc, el) => {
   return acc;
 }, false);
 
+const addItemToList = (newItem) => {
+  const itemTitle = newItem.querySelector('title').firstChild.data;
+  const itemDesc = newItem.querySelector('description').firstChild.wholeText;
+  const itemLink = newItem.querySelector('link').firstChild.data;
+  if (!hasItem(itemTitle, state.listOfArticles)) {
+    state.listOfArticles.push({ title: itemTitle, description: itemDesc, link: itemLink });
+  }
+  return state;
+};
+
 const addRssToLists = (dom) => {
   const findTitle = dom.querySelector('title');
   const title = findTitle.firstChild.data;
@@ -45,41 +56,53 @@ const addRssToLists = (dom) => {
   if (!hasItem(title, state.listOfRss)) {
     state.listOfRss.push({ title, description: desc, link: lnk });
   }
-
   const [...findItem] = dom.getElementsByTagName('item');
-  const addItem = (arr, i = 19) => {
+  const addItem = (arr, i) => {
     if (i < 0) {
       return;
     }
-    const itemTitle = arr[i].querySelector('title').firstChild.data;
-    const itemDesc = arr[i].querySelector('description').firstChild.wholeText;
-    const itemLink = arr[i].querySelector('link').firstChild.data;
-    if (!hasItem(itemTitle, state.listOfArticles)) {
-      state.listOfArticles.push({ title: itemTitle, description: itemDesc, link: itemLink });
-    }
+    addItemToList(arr[i]);
     addItem(arr, i - 1);
   };
-
   if (findItem.length < 20) {
     addItem(findItem, findItem.length - 1);
   } else {
-    addItem(findItem);
+    addItem(findItem, 19);
   }
   return state;
 };
 
-const addStream = () => {
+const addNewItems = (dom) => {
+  const [...findItems] = dom.getElementsByTagName('item');
+  console.log('TEST TEST TEST');
+};
+
+const findNewArticles = () => {
+  state.listOfRss.forEach((el) => {
+    const corsUrl = `${cors}${el.link}`;
+    axios.get(corsUrl)
+      .then(response => parseRSS(response))
+      .then(response => addNewItems(response))
+      .catch(error => parseError(error));
+  });
+//  renderLists();
+};
+
+const addStream = (event) => {
+  event.preventDefault();
   const url = document.getElementById('url').value;
-  const corsUrl = `https://crossorigin.me/${url}`;
+  const corsUrl = `${cors}${url}`;
   document.getElementById('url').value = '';
   axios.get(corsUrl)
     .then(response => parseRSS(response))
     .then(response => addRssToLists(response))
     .then(() => renderLists())
+    .then(() => setInterval(findNewArticles, 5000))
     .catch(error => parseError(error));
+  return false;
 };
 
 const urlField = document.getElementById('url');
 urlField.addEventListener('input', validateInput);
 const formAdd = document.getElementById('addRSS');
-formAdd.addEventListener('submit', addStream);
+formAdd.addEventListener('submit', event => addStream(event));
