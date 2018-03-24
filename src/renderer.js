@@ -1,5 +1,5 @@
 // import 'jquery';
-import state from './';
+import state from './state';
 
 const makeDom = (head, array, name) => {
   if (!array || array.length === 0) {

@@ -1,15 +1,12 @@
 import isURL from 'validator/lib/isURL';
 import axios from 'axios';
 import renderLists from './renderer';
-import state from './';
-
-const cors = 'https://crossorigin.me/';
+import state from './state';
 
 const validateInput = () => {
   const url = document.forms.addRSS.elements.url.value;
   state.isValidURL = isURL(url);
   if (!state.isValidURL) {
-  //    document.getElementById('url').setCustomValidity('Введите адрес');
     document.getElementById('url').className = 'form-control is-invalid';
   } else {
   //  document.getElementById('url').setCustomValidity('');
@@ -92,6 +89,7 @@ const addNewItems = (dom) => {
 };
 
 const addNewArticles = () => {
+  const cors = 'https://crossorigin.me/';
   state.listOfRssLinks.forEach((el) => {
     const corsUrl = `${cors}${el}`;
     axios.get(corsUrl)
@@ -103,6 +101,7 @@ const addNewArticles = () => {
 };
 
 const addStream = (event) => {
+  const cors = 'https://crossorigin.me/';
   event.preventDefault();
   const url = document.getElementById('url').value;
   state.listOfRssLinks.push(url);
@@ -117,7 +116,11 @@ const addStream = (event) => {
   return false;
 };
 
-const urlField = document.getElementById('url');
-urlField.addEventListener('input', validateInput);
-const formAdd = document.getElementById('addRSS');
-formAdd.addEventListener('submit', event => addStream(event));
+const handler = () => {
+  const urlField = document.getElementById('url');
+  urlField.addEventListener('input', validateInput);
+  const formAdd = document.getElementById('addRSS');
+  formAdd.addEventListener('submit', event => addStream(event));
+};
+
+export default handler;
