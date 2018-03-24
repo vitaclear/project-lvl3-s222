@@ -82,6 +82,4 @@ const addStream = () => {
 const urlField = document.getElementById('url');
 urlField.addEventListener('input', validateInput);
 const formAdd = document.getElementById('addRSS');
-// const btn = document.getElementById('button');
 formAdd.addEventListener('submit', addStream);
-// btn.addEventListener('click', addStream);

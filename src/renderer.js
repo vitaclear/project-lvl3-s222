@@ -1,3 +1,4 @@
+import 'jquery';
 import state from './';
 
 const makeDom = (head, array, name) => {
@@ -13,6 +14,16 @@ const makeDom = (head, array, name) => {
   const br = document.createElement('br');
   head.appendChild(br);
 
+  const createButton = (articleTitle) => {
+    const btn = document.createElement('button');
+    btn.setAttribute('class', 'btn btn-primary');
+    btn.setAttribute('data-toggle', 'modal');
+    btn.setAttribute('data-target', '#modalWindow');
+    btn.setAttribute('data-whatever', `${articleTitle}`);
+    btn.textContent = 'Описание';
+    return btn;
+  };
+
   const addElt = (obj) => {
     const divEl = document.createElement('div');
     const keys = Object.keys(obj);
@@ -27,6 +38,12 @@ const makeDom = (head, array, name) => {
       tag.appendChild(text);
       divEl.appendChild(tag);
     });
+    const butn = createButton(obj.title);
+    butn.addEventListener('click', () => {
+      document.getElementById('modalTitle').textContent = obj.title;
+      document.getElementById('modalBody').textContent = obj.description;
+    });
+    divEl.append(butn);
     head.prepend(divEl);
   };
   array.forEach(elt => addElt(elt));
