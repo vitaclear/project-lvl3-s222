@@ -17,6 +17,8 @@ const validateInput = () => {
 
 const parseError = (str) => {
   console.log('Не удаётся обработать RSS-поток');
+  alert('Проблемы с загрузкой RSS потока');
+//  document.getElementById('modalWindow').modal('show');
   return new Error(str);
 };
 
@@ -35,7 +37,8 @@ const hasItem = (titl, lst) => lst.reduce((acc, el) => {
 
 const addItemToList = (newItem) => {
   const itemTitle = newItem.querySelector('title').firstChild.data;
-  const itemDesc = newItem.querySelector('description').firstChild.wholeText;
+  const findDesc = newItem.querySelector('description');
+  const itemDesc = findDesc ? findDesc.firstChild.wholeText : '';
   const itemLink = newItem.querySelector('link').firstChild.data;
   state.listOfArticleTitles.push(itemTitle);
   if (!hasItem(itemTitle, state.listOfArticles)) {
@@ -53,6 +56,9 @@ const addRssToLists = (dom) => {
   const lnk = findLink.firstChild.data;
   if (!hasItem(title, state.listOfRss)) {
     state.listOfRss.push({ title, description: desc, link: lnk });
+    document.getElementById('url').value = '';
+  } else {
+    document.getElementById('modalWindow').modal();
   }
   const [...findItem] = dom.getElementsByTagName('item');
   const addItem = (arr, i) => {
@@ -106,7 +112,6 @@ const addStream = (event) => {
   const url = document.getElementById('url').value;
   state.listOfRssLinks.push(url);
   const corsUrl = `${cors}${url}`;
-  document.getElementById('url').value = '';
   axios.get(corsUrl)
     .then(response => parseRSS(response))
     .then(response => addRssToLists(response))

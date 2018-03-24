@@ -41,7 +41,11 @@ const makeDom = (head, array, name) => {
     const butn = createButton(obj.title);
     butn.addEventListener('click', () => {
       document.getElementById('modalTitle').textContent = obj.title;
-      document.getElementById('modalBody').textContent = obj.description;
+      if (obj.description === '') {
+        document.getElementById('modalBody').textContent = 'Описание отсутствует';
+      } else {
+        document.getElementById('modalBody').textContent = obj.description;
+      }
     });
     divEl.append(butn);
     const brTag = document.createElement('br');
