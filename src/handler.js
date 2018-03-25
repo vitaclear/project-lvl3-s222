@@ -4,21 +4,29 @@ import renderLists from './renderer';
 import state from './state';
 
 const validateInput = () => {
-  const url = document.forms.addRSS.elements.url.value;
+  const urlEl = document.getElementById('url');
+  const url = urlEl.value;
   state.isValidURL = isURL(url);
   if (!state.isValidURL) {
-    document.getElementById('url').className = 'form-control is-invalid';
+    urlEl.classList.add('is-invalid');
+    urlEl.classList.remove('is-valid');
   } else {
-  //  document.getElementById('url').setCustomValidity('');
-    document.getElementById('url').className = 'form-control is-valid';
+    //  urlEl.setCustomValidity('');
+    urlEl.classList.add('is-valid');
+    urlEl.classList.remove('is-invalid');
   }
   return state.isValidURL;
 };
 
 const parseError = (str) => {
   console.log('Не удаётся обработать RSS-поток');
-  alert('Проблемы с загрузкой RSS потока');
-//  document.getElementById('modalWindow').modal('show');
+  //  document.getElementById('modalWindow').modal('show');
+  return new Error(str);
+};
+
+const getError = (str) => {
+  console.log('Не удаётся скачать RSS-поток');
+  alert('Не удаётся скачать RSS-поток');
   return new Error(str);
 };
 
@@ -28,8 +36,8 @@ const parseRSS = (str) => {
   return parsed;
 };
 
-const hasItem = (titl, lst) => lst.reduce((acc, el) => {
-  if (el.title === titl) {
+const hasItem = (title, list) => list.reduce((acc, el) => {
+  if (el.title === title) {
     return true;
   }
   return acc;
@@ -58,9 +66,12 @@ const addRssToLists = (dom) => {
     state.listOfRss.push({ title, description: desc, link: lnk });
     document.getElementById('url').value = '';
   } else {
-    document.getElementById('modalWindow').modal();
+    // document.getElementById('modalWindow').modal();
+    alert('Такой поток уже добавлен');
   }
   const [...findItem] = dom.getElementsByTagName('item');
+  const quantityOfArticles = findItem.length < 20 ? findItem.length : 20;
+  const lastIndex = quantityOfArticles - 1;
   const addItem = (arr, i) => {
     if (i < 0) {
       return;
@@ -68,11 +79,7 @@ const addRssToLists = (dom) => {
     addItemToList(arr[i]);
     addItem(arr, i - 1);
   };
-  if (findItem.length < 20) {
-    addItem(findItem, findItem.length - 1);
-  } else {
-    addItem(findItem, 19);
-  }
+  addItem(findItem, lastIndex);
   return state;
 };
 
@@ -113,6 +120,7 @@ const addStream = (event) => {
   state.listOfRssLinks.push(url);
   const corsUrl = `${cors}${url}`;
   axios.get(corsUrl)
+    .catch(error => getError(error))
     .then(response => parseRSS(response))
     .then(response => addRssToLists(response))
     .then(() => renderLists())
