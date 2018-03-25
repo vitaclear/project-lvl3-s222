@@ -25,7 +25,7 @@ const parseError = (str) => {
 };
 
 const getError = (str) => {
-  console.log('Не удаётся скачать RSS-поток');
+  console.log('Ошибка скачивания потока');
   alert('Не удаётся скачать RSS-поток');
   return new Error(str);
 };
@@ -101,16 +101,24 @@ const addNewItems = (dom) => {
   return hasNewItems;
 };
 
-const addNewArticles = () => {
-  const cors = 'https://crossorigin.me/';
-  state.listOfRssLinks.forEach((el) => {
-    const corsUrl = `${cors}${el}`;
-    axios.get(corsUrl)
-      .then(response => parseRSS(response))
-      .then(response => addNewItems(response))
-      .then(response => (response ? renderLists() : {}))
-      .catch(error => parseError(error));
-  });
+const updateStreams = () => {
+  const updateError = (str) => {
+    console.log(`Ошибка обновления потока: ${str}`);
+    updateStreams();
+  };
+  const addNewArticles = () => {
+    const cors = 'https://crossorigin.me/';
+    state.listOfRssLinks.forEach((el) => {
+      const corsUrl = `${cors}${el}`;
+      axios.get(corsUrl)
+        .then(response => parseRSS(response))
+        .then(response => addNewItems(response))
+        .then(response => (response ? renderLists() : {}))
+        .catch(error => updateError(error));
+    });
+    updateStreams();
+  };
+  setTimeout(addNewArticles, 5000);
 };
 
 const addStream = (event) => {
@@ -122,10 +130,10 @@ const addStream = (event) => {
   axios.get(corsUrl)
     .catch(error => getError(error))
     .then(response => parseRSS(response))
+    .catch(error => parseError(error))
     .then(response => addRssToLists(response))
     .then(() => renderLists())
-    .then(() => setInterval(addNewArticles, 5000))
-    .catch(error => parseError(error));
+    .then(() => updateStreams());
   return false;
 };
 
