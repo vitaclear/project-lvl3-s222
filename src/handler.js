@@ -26,8 +26,14 @@ const parseError = (str) => {
 
 const getError = (str) => {
   console.log('Ошибка скачивания потока');
-  alert('Не удаётся скачать RSS-поток');
+  alert('Не удаётся скачать RSS-поток. Попробуйте позже.');
   return new Error(str);
+};
+
+const rssError = () => {
+  console.log('Поток не является RSS');
+  alert('Поток не распознан как RSS');
+  return new Error();
 };
 
 const parseRSS = (str) => {
@@ -56,11 +62,16 @@ const addItemToList = (newItem) => {
 };
 
 const addRssToLists = (dom) => {
+  const hasTagChannel = dom.querySelector('channel');
+  if (!hasTagChannel) {
+    rssError();
+    return;
+  }
   const findTitle = dom.querySelector('title');
-  const title = findTitle.firstChild.data;
   const findDesc = dom.querySelector('description');
-  const desc = findDesc.firstChild.data;
   const findLink = dom.querySelector('link');
+  const title = findTitle.firstChild.data;
+  const desc = findDesc.firstChild.data;
   const lnk = findLink.firstChild.data;
   if (!hasItem(title, state.listOfRss)) {
     state.listOfRss.push({ title, description: desc, link: lnk });
@@ -68,6 +79,7 @@ const addRssToLists = (dom) => {
   } else {
     // document.getElementById('modalWindow').modal();
     alert('Такой поток уже добавлен');
+    return;
   }
   const [...findItem] = dom.getElementsByTagName('item');
   const quantityOfArticles = findItem.length < 20 ? findItem.length : 20;
@@ -80,7 +92,6 @@ const addRssToLists = (dom) => {
     addItem(arr, i - 1);
   };
   addItem(findItem, lastIndex);
-  return state;
 };
 
 const addNewItems = (dom) => {
@@ -102,21 +113,24 @@ const addNewItems = (dom) => {
 };
 
 const updateStreams = () => {
-  const updateError = (str) => {
-    console.log(`Ошибка обновления потока: ${str}`);
+  const renderIfNeeded = (array) => {
+    const needUpdate = array.reduce((acc, el) => acc || el, false);
+    if (needUpdate) {
+      renderLists();
+    }
     updateStreams();
   };
+
   const addNewArticles = () => {
     const cors = 'https://crossorigin.me/';
-    state.listOfRssLinks.forEach((el) => {
-      const corsUrl = `${cors}${el}`;
-      axios.get(corsUrl)
+    const promises = state.listOfRssLinks.map(el =>
+      axios.get(`${cors}${el}`)
         .then(response => parseRSS(response))
         .then(response => addNewItems(response))
-        .then(response => (response ? renderLists() : {}))
-        .catch(error => updateError(error));
-    });
-    updateStreams();
+        .catch(() => false));
+    Promise.all(promises)
+      .then(renderIfNeeded)
+      .catch(renderIfNeeded);
   };
   setTimeout(addNewArticles, 5000);
 };
@@ -128,12 +142,9 @@ const addStream = (event) => {
   state.listOfRssLinks.push(url);
   const corsUrl = `${cors}${url}`;
   axios.get(corsUrl)
-    .catch(error => getError(error))
-    .then(response => parseRSS(response))
-    .catch(error => parseError(error))
-    .then(response => addRssToLists(response))
-    .then(() => renderLists())
-    .then(() => updateStreams());
+    .then(response => parseRSS(response), error => getError(error))
+    .then(response => addRssToLists(response), error => parseError(error))
+    .then(() => renderLists());
   return false;
 };
 
@@ -142,6 +153,7 @@ const handler = () => {
   urlField.addEventListener('input', validateInput);
   const formAdd = document.getElementById('addRSS');
   formAdd.addEventListener('submit', event => addStream(event));
+  updateStreams();
 };
 
 export default handler;
